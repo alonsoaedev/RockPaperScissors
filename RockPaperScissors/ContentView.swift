@@ -7,10 +7,19 @@
 
 import SwiftUI
 
+struct TitleText: View {
+    let content: String
+    
+    var body: some View {
+        Text(content)
+            .padding(EdgeInsets(top: 2.5, leading: 0, bottom: 2.5, trailing: 0))
+    }
+}
+
 struct ContentView: View {
-    private let choices: [String] = ["Rock", "Paper", "Scissors"]
-    private let winners: [String] = ["Paper", "Scissors", "Rock"]
-    private let losers: [String] = ["Scissors", "Rock", "Paper"]
+    private let choices: [String] = ["🪨", "📄", "✂️"]
+    private let winners: [String] = ["📄", "✂️", "🪨"]
+    private let losers: [String] = ["✂️", "🪨", "📄"]
     
     @State private var appChoice: Int = .random(in: 0..<3)
     @State private var shouldWin: Bool = .random()
@@ -31,29 +40,38 @@ struct ContentView: View {
     }
 
     var body: some View {
-        Text("The app chose: \(choices[appChoice])")
-        Text("You should \(shouldWin ? "win" : "lose")")
-        Text("Attempts: \(attempts)")
+        VStack {
+            TitleText(content: "The app chose: \(choices[appChoice])")
+            TitleText(content: "You should \(shouldWin ? "win" : "lose")")
+            TitleText(content: "Attempts: \(attempts)")
+        }
+        .font(.system(size: 30))
+        .padding()
         
-        ForEach(choices, id: \.self) { choice in
-            Button(choice) {
-                score = judge(choice) ? score + 1 : score - 1
-                
-                if (attempts >= 9) {
-                    isGameOver = true
-                    return
+        HStack {
+            ForEach(choices, id: \.self) { choice in
+                Button(choice) {
+                    score = judge(choice) ? score + 1 : score - 1
+                    
+                    if (attempts >= 9) {
+                        isGameOver = true
+                        return
+                    }
+                    
+                    attempts += 1
+                    shouldWin.toggle()
+                    appChoice = .random(in: 0..<3)
                 }
-
-                attempts += 1
-                shouldWin.toggle()
-                appChoice = .random(in: 0..<3)
-            }
-            .alert("Game Over", isPresented: $isGameOver) {
-                Button("OK", action: resetGame)
-            } message: {
-                Text("Final score: \(score)")
+                .font(.system(size: 50))
+                .padding(EdgeInsets.init(top: 0, leading: 10, bottom: 0, trailing: 10))
+                .alert("Game Over", isPresented: $isGameOver) {
+                    Button("OK", action: resetGame)
+                } message: {
+                    Text("Final score: \(score)")
+                }
             }
         }
+        .padding(EdgeInsets.init(top: 50, leading: 0, bottom: 0, trailing: 0))
     }
 }
 
