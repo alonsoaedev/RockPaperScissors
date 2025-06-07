@@ -19,6 +19,7 @@ struct ContentView: View {
         
         ForEach(choices, id: \.self) { choice in
             Button(choice) {
+                shouldWin.toggle()
                 appChoice = .random(in: 0..<3)
             }
         }
